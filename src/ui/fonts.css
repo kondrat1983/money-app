@@ -1,0 +1,22 @@
+/* Self-hosted, latin subset only (CSP font-src 'self'; works offline). */
+@import '@fontsource/cinzel/latin-600.css';
+@import '@fontsource/cinzel/latin-700.css';
+@import '@fontsource/silkscreen/latin-400.css';
+
+/*
+ * NOTE on the hryvnia sign (U+20B4): Cinzel and Silkscreen have no glyph for it
+ * (the latin subsets do not cover it), and generic fallbacks like Georgia or
+ * ui-monospace may not either. This face is declared with unicode-range U+20B4
+ * only, maps to local system fonts known to ship it, and is listed FIRST in the
+ * --display / --pixel / --text stacks, so the browser uses it only for that
+ * one character and the regular face for everything else.
+ */
+@font-face {
+  font-family: 'UAH Fallback';
+  font-style: normal;
+  font-weight: 100 900;
+  src:
+    local('Helvetica Neue'), local('Helvetica'), local('Arial'), local('Segoe UI'),
+    local('Roboto'), local('DejaVu Sans'), local('Noto Sans'), local('Liberation Sans');
+  unicode-range: U+20B4;
+}

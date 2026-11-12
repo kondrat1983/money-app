@@ -1,5 +1,5 @@
-// Generates placeholder PWA icons (public/icon-192.png, public/icon-512.png)
-// using only Node built-ins. Run: node scripts/make-icons.mjs
+// Generates PWA icons (icon-192/512, icon-maskable-512, apple-touch-icon 180) into public/
+// using only Node built-ins. Pixel-art amber coin on near-black. Run: node scripts/make-icons.mjs
 import { deflateSync } from 'node:zlib'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -7,7 +7,31 @@ import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const BG = [0x14, 0x11, 0x0f]
-const FG = [0xd4, 0xa2, 0x4c]
+const hex = (h) => [h >> 16, (h >> 8) & 255, h & 255]
+const RIM = hex(0x7a5a1c)
+const FACE = hex(0xd0a03a)
+const HI = hex(0xe9cc7a)
+const SHADE = hex(0xa67c24)
+const INK = hex(0x1a1208)
+const GRID = 32 // art is a 32x32 pixel grid scaled to any size
+
+// Colour of one art cell (cx, cy in 0..31) for a coin of radius r cells, or null for ground.
+function cell(cx, cy, r) {
+  const dx = cx + 0.5 - GRID / 2
+  const dy = cy + 0.5 - GRID / 2
+  const d = Math.hypot(dx, dy)
+  if (d > r) return null
+  if (d > r - 1.5) return RIM
+  // emblem: vertical bar with two crossbars, scaled with the coin
+  const u = Math.round((dx / r) * 10)
+  const v = Math.round((dy / r) * 10)
+  const bar = Math.abs(u) <= 1 && Math.abs(v) <= 6
+  const cross = Math.abs(v + 2) <= 0 || Math.abs(v - 2) <= 0 ? Math.abs(u) <= 5 : false
+  if (bar || cross) return INK
+  if (Math.abs(d - (r - 4)) < 0.7) return SHADE
+  if (dx + dy < -r * 0.9 && d > r - 4) return HI
+  return FACE
+}
 
 const crcTable = Array.from({ length: 256 }, (_, n) => {
   let c = n
@@ -30,18 +54,14 @@ function chunk(type, data) {
   return Buffer.concat([len, td, crc])
 }
 
-function png(size) {
-  // Placeholder: dark background with a centred gold square.
-  const inner = Math.round(size * 0.4)
-  const lo = Math.round((size - inner) / 2)
-  const hi = lo + inner
+function png(size, radiusCells) {
   const raw = Buffer.alloc((size * 4 + 1) * size)
   for (let y = 0; y < size; y++) {
     const row = y * (size * 4 + 1)
     raw[row] = 0 // filter: none
     for (let x = 0; x < size; x++) {
-      const on = x >= lo && x < hi && y >= lo && y < hi
-      const [r, g, b] = on ? FG : BG
+      const c = cell(Math.floor((x / size) * GRID), Math.floor((y / size) * GRID), radiusCells)
+      const [r, g, b] = c ?? BG
       const p = row + 1 + x * 4
       raw[p] = r
       raw[p + 1] = g
@@ -64,7 +84,14 @@ function png(size) {
 
 const outDir = join(root, 'public')
 mkdirSync(outDir, { recursive: true })
-for (const size of [192, 512]) {
-  writeFileSync(join(outDir, `icon-${size}.png`), png(size))
-  console.log(`wrote public/icon-${size}.png`)
+// Coin radius in art cells. Maskable icons keep the emblem inside the central 80% safe zone.
+const outputs = [
+  ['icon-192.png', 192, 13],
+  ['icon-512.png', 512, 13],
+  ['icon-maskable-512.png', 512, 10],
+  ['apple-touch-icon.png', 180, 12],
+]
+for (const [name, size, r] of outputs) {
+  writeFileSync(join(outDir, name), png(size, r))
+  console.log(`wrote public/${name}`)
 }
