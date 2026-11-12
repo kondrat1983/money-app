@@ -8,7 +8,7 @@ Owner setup (one time). Nothing here needs a real URL, id or token in the repo.
 4. Select the function `setup` and Run it. Approve the permission prompts. It creates the sheets (Transactions, Categories, Settings, Subscriptions), the onEdit trigger and a token.
 5. Open Execution log and copy the line `TOKEN (shown once...)`. It is shown only once; keep it in your password manager. To replace it later run `rotateToken` (then update the phone).
 6. Deploy > New deployment > type Web app. Execute as: **Me**. Who has access: **Anyone**. Deploy and copy the Web app URL ending in `/exec`.
-7. Back in the editor, select `showSetupString` and Run it. Copy the `youspent1.…` line from the log and paste it into the app: Settings > Setup string > Apply > Test connection. The token never leaves your devices.
+7. Copy the Web app URL (Deploy > Manage deployments > Copy). In Project Settings > Script properties add `EXEC_URL` = that URL. Back in the editor, select `showSetupString` and Run it. Copy the `youspent1.…` line from the log and paste it into the app: Settings > Setup string > Apply > Test connection. The token never leaves your devices.
 
 After any code change: build again, paste into the editor, then Deploy > Manage deployments > edit > Version: **New version**. The `/exec` URL only serves a saved deployment version, so skipping this keeps the old code running.
 

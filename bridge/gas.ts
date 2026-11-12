@@ -49,7 +49,6 @@ declare const ContentService: {
   MimeType: { JSON: unknown };
 };
 declare const ScriptApp: {
-  getService(): { getUrl(): string | null };
   getProjectTriggers(): GTrigger[];
   deleteTrigger(t: GTrigger): void;
   newTrigger(fn: string): { forSpreadsheet(ss: GSpreadsheet): { onEdit(): { create(): unknown } } };
@@ -71,6 +70,15 @@ function sheetOrThrow(name: string): GSheet {
   return s;
 }
 
+/** Last row whose column A (id / key) is non-empty. Checkbox cells pre-filled with FALSE make getLastRow() useless. */
+function lastDataRow(s: GSheet): number {
+  const last = s.getLastRow();
+  if (last < 1) return 0;
+  const col = s.getRange(1, 1, last, 1).getValues();
+  for (let i = col.length - 1; i >= 0; i--) if (String(col[i][0] ?? '').trim() !== '') return i + 1;
+  return 0;
+}
+
 const sheetPort: SheetPort = {
   readAll(name) {
     const s = ss().getSheetByName(name);
@@ -82,7 +90,7 @@ const sheetPort: SheetPort = {
   append(name, rows) {
     if (!rows.length) return;
     const s = sheetOrThrow(name);
-    const start = s.getLastRow() + 1;
+    const start = Math.max(lastDataRow(s), 1) + 1;
     const need = start + rows.length - 1;
     if (s.getMaxRows() < need) s.insertRowsAfter(s.getMaxRows(), need - s.getMaxRows() + 200);
     const l = layoutOf(name);
@@ -205,13 +213,21 @@ export function rotateToken(): void {
   runSetup(true);
 }
 
-/** Logs the setup string for the phone: youspent1.<base64url({u, t})>. Run after Deploy > New deployment. */
+/**
+ * Logs the setup string for the phone: youspent1.<base64url({u, t})>.
+ * ScriptApp.getService().getUrl() can return a URL that is not the live deployment, so the
+ * owner sets Script property EXEC_URL (Project Settings > Script properties) to the /exec URL
+ * copied from Deploy > Manage deployments.
+ */
 export function showSetupString(): void {
-  const token = PropertiesService.getScriptProperties().getProperty(TOKEN_KEY);
-  const raw = ScriptApp.getService().getUrl();
+  const props = PropertiesService.getScriptProperties();
+  const token = props.getProperty(TOKEN_KEY);
+  const url = (props.getProperty('EXEC_URL') || '').trim();
   if (!token) { Logger.log('No token yet. Run setup() first.'); return; }
-  if (!raw) { Logger.log('No web app deployment yet. Deploy > New deployment > Web app, then run this again.'); return; }
-  const url = raw.replace(/\/dev$/, '/exec');
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(url)) {
+    Logger.log('Set Script property EXEC_URL to the Web app URL from Deploy > Manage deployments (ends with /exec), then run this again.');
+    return;
+  }
   const b64 = Utilities.base64EncodeWebSafe(JSON.stringify({ u: url, t: token })).replace(/=+$/, '');
   Logger.log('Paste this into YOU SPENT > Settings > Setup string (keep it private):');
   Logger.log('youspent1.' + b64);
