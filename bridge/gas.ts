@@ -42,12 +42,14 @@ declare const Utilities: {
   formatDate(d: Date, tz: string, fmt: string): string;
   computeDigest(alg: unknown, v: string): number[];
   DigestAlgorithm: { SHA_256: unknown };
+  base64EncodeWebSafe(s: string): string;
 };
 declare const ContentService: {
   createTextOutput(s: string): { setMimeType(m: unknown): unknown };
   MimeType: { JSON: unknown };
 };
 declare const ScriptApp: {
+  getService(): { getUrl(): string | null };
   getProjectTriggers(): GTrigger[];
   deleteTrigger(t: GTrigger): void;
   newTrigger(fn: string): { forSpreadsheet(ss: GSpreadsheet): { onEdit(): { create(): unknown } } };
@@ -186,7 +188,7 @@ function runSetup(rotate: boolean): void {
   const props = PropertiesService.getScriptProperties();
   const res = setupCore(
     { setup: setupPort, sheet: sheetPort, getToken: () => props.getProperty(TOKEN_KEY), setToken: (t) => void props.setProperty(TOKEN_KEY, t), randomBytes32 },
-    { rotate },
+    { rotate, seedCategories: true },
   );
   // Categories sheet may have been created after Transactions: refresh the dropdown.
   setupPort.ensureSheet(LAYOUTS[0]);
@@ -201,4 +203,16 @@ export function setup(): void {
 
 export function rotateToken(): void {
   runSetup(true);
+}
+
+/** Logs the setup string for the phone: youspent1.<base64url({u, t})>. Run after Deploy > New deployment. */
+export function showSetupString(): void {
+  const token = PropertiesService.getScriptProperties().getProperty(TOKEN_KEY);
+  const raw = ScriptApp.getService().getUrl();
+  if (!token) { Logger.log('No token yet. Run setup() first.'); return; }
+  if (!raw) { Logger.log('No web app deployment yet. Deploy > New deployment > Web app, then run this again.'); return; }
+  const url = raw.replace(/\/dev$/, '/exec');
+  const b64 = Utilities.base64EncodeWebSafe(JSON.stringify({ u: url, t: token })).replace(/=+$/, '');
+  Logger.log('Paste this into YOU SPENT > Settings > Setup string (keep it private):');
+  Logger.log('youspent1.' + b64);
 }

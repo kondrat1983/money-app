@@ -26,6 +26,7 @@ await build({
       'function onEditInstalled(e) { return __bridge.onEditInstalled(e); }',
       'function setup() { return __bridge.setup(); }',
       'function rotateToken() { return __bridge.rotateToken(); }',
+      'function showSetupString() { return __bridge.showSetupString(); }',
     ].join('\n'),
   },
 });

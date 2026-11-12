@@ -235,3 +235,18 @@ describe('onEditCore', () => {
     expect(onEditCore(deps, { sheet: CAT_SHEET, row: 2, numRows: 1, col: 2, numCols: 1 })).toBe(0);
   });
 });
+
+import { setupCore as _setupCore } from './core.ts';
+import { MemorySheet as _MS } from '../src/lib/bridge/mock.ts';
+import { describe as _d, it as _it, expect as _e } from 'vitest';
+_d('setupCore seeding', () => {
+  _it('seeds default categories once when asked', () => {
+    const sheet = new _MS();
+    const deps = { setup: sheet, sheet, getToken: () => 'x', setToken: () => {}, randomBytes32: () => new Uint8Array(32) } as any;
+    _setupCore(deps, { seedCategories: true });
+    const n = sheet.readAll('Categories').length;
+    _setupCore(deps, { seedCategories: true });
+    _e(sheet.readAll('Categories').length).toBe(n);
+    _e(n).toBeGreaterThan(20);
+  });
+});

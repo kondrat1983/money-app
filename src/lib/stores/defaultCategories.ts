@@ -1,4 +1,4 @@
-import type { Category, TxType } from '../model';
+import type { Category, TxType } from '../model/index.ts';
 
 const SEED_AT = '1970-01-01T00:00:00.000Z';
 

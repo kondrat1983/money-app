@@ -1,5 +1,6 @@
 // Pure Apps Script bridge logic. No Google globals: everything external is injected.
 // Contract: docs/ARCHITECTURE.md §3, §4, §8.
+import { defaultCategories } from '../src/lib/stores/defaultCategories.ts';
 import type { Category, ErrorCode, OpResult, RemoteSettings, Transaction, TxType } from '../src/lib/model/index.ts';
 import {
   API_VERSION,
@@ -546,7 +547,7 @@ export interface SetupDeps {
 }
 
 /** Creates sheets and Settings rows. Returns a freshly generated token (show it once) or null if one existed. */
-export function setupCore(d: SetupDeps, opts: { rotate?: boolean } = {}): { token: string | null } {
+export function setupCore(d: SetupDeps, opts: { rotate?: boolean; seedCategories?: boolean } = {}): { token: string | null } {
   for (const l of LAYOUTS) d.setup.ensureSheet(l);
   const have = new Set(d.sheet.readAll(SETTINGS_SHEET).slice(1).map((r) => str(cell(r, 0)).trim()));
   const missing: unknown[][] = [];
@@ -554,6 +555,12 @@ export function setupCore(d: SetupDeps, opts: { rotate?: boolean } = {}): { toke
     if (!have.has(k)) missing.push([k, v]);
   }
   if (missing.length) d.sheet.append(SETTINGS_SHEET, missing);
+  // Seed default categories into an empty Categories sheet, so the Sheet (source of truth) has them.
+  const catRows = d.sheet.readAll(CAT_SHEET).slice(1).filter((r) => str(cell(r, 0)).trim() !== '');
+  if (opts.seedCategories && catRows.length === 0) {
+    const head = d.sheet.readAll(TX_SHEET).slice(1).reduce((m, r) => Math.max(m, Number(cell(r, 9)) || 0), 0);
+    d.sheet.append(CAT_SHEET, defaultCategories.map((c, i) => catToRow({ ...c, rev: head + i + 1 })));
+  }
   if (d.getToken() && !opts.rotate) return { token: null };
   const token = base64url(d.randomBytes32());
   d.setToken(token);
