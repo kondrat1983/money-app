@@ -47,18 +47,18 @@
     { "id": "sub-spotify", "when": { "category": "Spotify" },
       "set": { "category": "subscriptions", "memo": "{category} · {memo}" } },
 
-    { "id": "bills-subscription-memo", "when": { "category": "Bills", "memo": "netflix|todoist|chatgpt|claude|roblox|spotify|ps\\+|playstation|xbox|youtube|apple|amazon prime|geforce|nintendo online|мегого|megogo|улучшение подписки" },
+    { "id": "bills-subscription-memo", "when": { "category": "Bills", "memo": "netflix|todoist|chatgpt|claude|roblox|spotify|ps\\+|playstation|xbox|youtube|apple|amazon prime|geforce|nintendo online|мегого|megogo|улучшение подписки|спотифай" },
       "set": { "category": "subscriptions" } },
-    { "id": "entertainment-subscription-memo", "when": { "category": "Entertainment", "memo": "netflix|todoist|chatgpt|claude|roblox|spotify|ps\\+|playstation|xbox|youtube|apple|amazon prime|geforce|nintendo online|мегого|megogo|улучшение подписки" },
+    { "id": "entertainment-subscription-memo", "when": { "category": "Entertainment", "memo": "netflix|todoist|chatgpt|claude|roblox|spotify|ps\\+|playstation|xbox|youtube|apple|amazon prime|geforce|nintendo online|мегого|megogo|улучшение подписки|спотифай" },
       "set": { "category": "subscriptions" } },
 
     { "id": "bills-internet", "when": { "category": "Bills", "memo": "network lviv" },
       "set": { "category": "internet" } },
     { "id": "bills-telephone", "when": { "category": "Bills", "memo": "kyivstar" },
       "set": { "category": "telephone" } },
-    { "id": "bills-bank-fees", "when": { "category": "Bills", "memo": "обслуживание карт|коміссія|комісія|комiсiя" },
+    { "id": "bills-bank-fees", "when": { "category": "Bills", "memo": "обслуживание карт|коміссія|комісія|комiсiя|комиссия" },
       "set": { "category": "bank-fees" } },
-    { "id": "bills-utilities", "when": { "category": "Bills", "memo": "осбб|(?<![\\p{L}])газ(?![\\p{L}])|gas\\.?ua|ком{1,2}унал|двер[иі]?|(?<![\\p{L}])скд|доставка газа" },
+    { "id": "bills-utilities", "when": { "category": "Bills", "memo": "осбб|(?<![\\p{L}])газ(?![\\p{L}])|gas\\.?ua|ком{1,2}унал|двер[иі]?|(?<![\\p{L}])скд|доставка газа|домофон|утримання|квартплат|гаряча вода" },
       "set": { "category": "utilities" } },
 
     { "id": "others-donations", "when": { "category": "Others", "memo": "(?<![\\p{L}])(на )?зсу(?![\\p{L}])" },
