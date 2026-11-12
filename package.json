@@ -10,6 +10,7 @@
     "test": "vitest run",
     "e2e": "playwright test --trace off",
     "bridge:build": "node bridge/build.mjs",
+    "import": "tsx tools/import/index.ts",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
   },
   "devDependencies": {
