@@ -32,3 +32,8 @@ playwright-report/
 *.njsproj
 *.sln
 *.sw?
+
+# Private data and bridge config (see docs/ARCHITECTURE.md §8)
+private/
+.clasp.json
+bridge/dist/
