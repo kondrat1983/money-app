@@ -1,0 +1,36 @@
+{
+  "name": "you-spent",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "e2e": "playwright test --trace off",
+    "bridge:build": "node bridge/build.mjs",
+    "import": "tsx tools/import/index.ts",
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+  },
+  "devDependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "@fontsource/silkscreen": "^5.3.0",
+    "@playwright/test": "1.63.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tsconfig/svelte": "^5.0.8",
+    "@types/node": "^24.19.2",
+    "esbuild": "^0.28.2",
+    "fake-indexeddb": "^6.2.8",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.7",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.6",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "idb": "^8.0.4"
+  }
+}

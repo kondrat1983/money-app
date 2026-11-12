@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "categories": [
+    { "id": "bills", "name": "Bills", "kind": "expense", "icon": "scroll", "color": "#8A8478", "order": 45 }
+  ],
+  "categoryMap": {
+    "transportation": "transportation",
+    "bills": "bills",
+    "atm": "atm",
+    "entertainment": "entertainment",
+    "others": "others",
+    "electronics": "electronics",
+    "food": "food",
+    "telephone": "telephone",
+    "pizza": "pizza",
+    "filter": "filter",
+    "cigarette": "cigarettes",
+    "clothing": "clothing",
+    "gift": "gift",
+    "home": "home",
+    "arcade": "arcade",
+    "футбол": "football",
+    "university": "education",
+    "fruits": "fruits",
+    "health": "health",
+    "book": "books",
+    "snacks": "snacks",
+    "wine": "wine",
+    "network lviv": "internet",
+    "salary": "salary",
+    "refunds": "refunds"
+  },
+  "rules": [
+    { "id": "savings-is-transfer",
+      "when": { "kind": "Income", "category": "Savings" },
+      "set": { "type": "transfer", "category": "savings" } },
+    { "id": "income-others",
+      "when": { "kind": "Income", "category": "Others" },
+      "set": { "category": "others-income" } },
+
+    { "id": "sub-xbox", "when": { "category": "Xbox" },
+      "set": { "category": "subscriptions", "memo": "{category} · {memo}" } },
+    { "id": "sub-playstation-plus", "when": { "category": "PlayStation Plus" },
+      "set": { "category": "subscriptions", "memo": "{category} · {memo}" } },
+    { "id": "sub-youtube-premium", "when": { "category": "YouTube premium" },
+      "set": { "category": "subscriptions", "memo": "{category} · {memo}" } },
+    { "id": "sub-spotify", "when": { "category": "Spotify" },
+      "set": { "category": "subscriptions", "memo": "{category} · {memo}" } },
+
+    { "id": "bills-subscription-memo", "when": { "category": "Bills", "memo": "netflix|todoist|chatgpt|claude|roblox|spotify|ps\\+|playstation|xbox|youtube|apple|amazon prime|geforce|nintendo online|мегого|megogo|улучшение подписки|спотифай" },
+      "set": { "category": "subscriptions" } },
+    { "id": "entertainment-subscription-memo", "when": { "category": "Entertainment", "memo": "netflix|todoist|chatgpt|claude|roblox|spotify|ps\\+|playstation|xbox|youtube|apple|amazon prime|geforce|nintendo online|мегого|megogo|улучшение подписки|спотифай" },
+      "set": { "category": "subscriptions" } },
+
+    { "id": "bills-internet", "when": { "category": "Bills", "memo": "network lviv" },
+      "set": { "category": "internet" } },
+    { "id": "bills-telephone", "when": { "category": "Bills", "memo": "kyivstar" },
+      "set": { "category": "telephone" } },
+    { "id": "bills-bank-fees", "when": { "category": "Bills", "memo": "обслуживание карт|коміссія|комісія|комiсiя|комиссия" },
+      "set": { "category": "bank-fees" } },
+    { "id": "bills-utilities", "when": { "category": "Bills", "memo": "осбб|(?<![\\p{L}])газ(?![\\p{L}])|gas\\.?ua|ком{1,2}унал|двер[иі]?|(?<![\\p{L}])скд|доставка газа|домофон|утримання|квартплат|гаряча вода" },
+      "set": { "category": "utilities" } },
+
+    { "id": "others-donations", "when": { "category": "Others", "memo": "(?<![\\p{L}])(на )?зсу(?![\\p{L}])" },
+      "set": { "category": "donations" } },
+
+    { "id": "entertainment-games", "when": { "category": "Entertainment", "memo": "cult of the lamb|resident evil|song of conquest|stardew valley|game" },
+      "set": { "category": "games" } }
+  ]
+}
