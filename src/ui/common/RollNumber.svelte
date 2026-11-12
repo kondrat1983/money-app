@@ -28,7 +28,9 @@
     const step = (t: number) => {
       const p = Math.min(1, (t - t0) / dur)
       const e = 1 - Math.pow(1 - p, 3)
-      shown = p === 1 ? to : Math.round(from + (to - from) * e)
+      // Step in whole hryvnias when both ends are whole, so kopiyky never flash mid-roll.
+      const unit = from % 100 === 0 && to % 100 === 0 ? 100 : 1
+      shown = p === 1 ? to : Math.round((from + (to - from) * e) / unit) * unit
       if (p < 1) raf = requestAnimationFrame(step)
     }
     raf = requestAnimationFrame(step)

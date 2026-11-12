@@ -7,4 +7,5 @@ export * from './derive';
 export { defaultCategories } from './defaultCategories';
 
 /** App-wide singleton on the default IndexedDB. Call `stores.init()` once at startup. */
-export const stores = createStores(createDb());
+export const db = createDb();
+export const stores = createStores(db);

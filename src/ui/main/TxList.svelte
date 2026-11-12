@@ -1,5 +1,5 @@
 <script lang="ts">
-  import PixelIcon from '../_stubs/PixelIcon.svelte'
+  import PixelIcon from '../icons/PixelIcon.svelte'
   import { formatMinor } from '../../lib/money'
   import type { Category, Transaction } from '../../lib/model'
   import type { DayGroup } from '../../lib/stores'

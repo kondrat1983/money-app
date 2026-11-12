@@ -4,12 +4,15 @@
   import TxList from './TxList.svelte'
   import type { Stores } from '../../lib/stores'
   import type { Transaction } from '../../lib/model'
+  import type { Snippet } from 'svelte'
 
-  let { stores, online, onAdd, onOpen }: {
+  let { stores, online, onAdd, onOpen, onSettings, notice }: {
     stores: Stores
     online: boolean
     onAdd: () => void
     onOpen: (tx: Transaction) => void
+    onSettings: () => void
+    notice?: Snippet
   } = $props()
 
   const ledger = $derived(stores.ledger)
@@ -39,8 +42,9 @@
 </script>
 
 <div class="screen" role="group" ontouchstart={down} ontouchend={up} ontouchcancel={() => (tracking = false)}>
-  <MonthHeader month={ledger.month} status={syncStatus.value} {online} onPrev={ledger.prev} onNext={ledger.next} />
+  <MonthHeader month={ledger.month} status={syncStatus.value} {online} onPrev={ledger.prev} onNext={ledger.next} {onSettings} />
   <MonthCard totals={ledger.totals} />
+  {@render notice?.()}
   <div class="listwrap">
     <TxList groups={ledger.groups} byId={categories.byId} ready={ledger.ready} lastAddedId={ledger.lastAddedId} {onOpen} />
   </div>

@@ -1,22 +1,22 @@
 <script lang="ts">
   import type { SyncStatus } from '../../lib/stores'
 
-  let { status, online }: { status: SyncStatus; online: boolean } = $props()
+  let { status, online, onTap }: { status: SyncStatus; online: boolean; onTap?: () => void } = $props()
 
   const label = $derived.by(() => {
     if (!online || status.state === 'offline') return status.pending > 0 ? `Offline · ${status.pending}` : 'Offline'
     if (status.state === 'error') return status.pending > 0 ? `Error · ${status.pending}` : 'Error'
     if (status.state === 'syncing') return status.pending > 0 ? `Syncing · ${status.pending}` : 'Syncing'
     if (status.pending > 0) return `${status.pending} unsynced`
-    if (status.state === 'unconfigured') return 'Local only'
+    if (status.state === 'unconfigured' || !status.lastSyncAt) return 'Never synced'
     return 'Synced'
   })
   const warn = $derived(!online || status.state === 'offline' || status.state === 'error' || status.dead > 0)
 </script>
 
-<span class="pill" class:warn data-testid="sync-pill" role="status" aria-label="Sync status: {label}">
+<button type="button" class="pill" class:warn data-testid="sync-pill" aria-label="Sync status: {label}" onclick={() => onTap?.()}>
   <i aria-hidden="true"></i>{label}
-</span>
+</button>
 
 <style>
   .pill {
@@ -33,6 +33,12 @@
     text-transform: uppercase;
     color: var(--ink2);
     white-space: nowrap;
+    background: none;
+    cursor: pointer;
+  }
+  .pill:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
   }
   i {
     width: 6px;
